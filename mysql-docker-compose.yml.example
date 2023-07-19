@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  db:
+    container_name: mysql-container
+    image: mysql:8.0
+    restart: always
+    # platform: linux/x86_64
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - 3306:3306
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - db-network
+    
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin
+    restart: always
+    environment:
+      - PMA_ARBITRARY=1
+    depends_on:
+      - mysql-container
+    ports:
+      - 8080:80
+    networks:
+      - db-network
+
+networks:
+  db-network:
+    external: true
+
+volumes:
+  mysql-data:
+    name: mysql-data
